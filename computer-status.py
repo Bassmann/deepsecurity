@@ -32,7 +32,9 @@ try:
     computers = api_instance.search_computers(api_version, search_filter=search_filter, expand=expand, overrides=overrides)
     for computer in computers.computers:
         if computer.azure_vm_virtual_machine_summary:
-            print('{} {}'.format(computer.host_name,computer.azure_vm_virtual_machine_summary.state))
+            print('{} {} ({})'.format(computer.host_name, computer.last_ip_used, computer.azure_vm_virtual_machine_summary.state))
+        else:
+            print('{} {}'.format(computer.host_name,computer.last_ip_used))
 
 except ApiException as e:
     print("An exception occurred when calling ComputersApi.list_computers: %s\n" % e)
