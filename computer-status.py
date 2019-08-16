@@ -23,6 +23,7 @@ def format_for_csv(line_item):
 
     return csv_line
 
+
 # Setup
 if not sys.warnoptions:
     warnings.simplefilter("ignore")
@@ -47,12 +48,11 @@ configuration.api_key['api-secret-key'] = secret_key
 api_instance = api.ComputersApi(api.ApiClient(configuration))
 # Add AV and IPS information
 expand_options = api.Expand()
-expand_options.add(api.Expand.all)
-#expand_options.add(api.Expand.computer_status)
-#expand_options.add(api.Expand.security_updates)
-#expand_options.add(api.Expand.intrusion_prevention)
-#expand_options.add(api.Expand.anti_malware)
-#expand_options.add(api.Expand.interfaces)
+expand_options.add(api.Expand.computer_status)
+expand_options.add(api.Expand.security_updates)
+expand_options.add(api.Expand.intrusion_prevention)
+expand_options.add(api.Expand.anti_malware)
+expand_options.add(api.Expand.interfaces)
 expand = expand_options.list()
 overrides = False
 
@@ -109,7 +109,7 @@ try:
                 last_comm = datetime.fromtimestamp(posix_time).isoformat()
             else:
                 last_comm = None
-                
+
             if computer.last_send_policy_request:
                 posix_time = int(computer.last_send_policy_request)/1000
                 last_send = datetime.fromtimestamp(posix_time).isoformat()
@@ -121,7 +121,7 @@ try:
                 last_success = datetime.fromtimestamp(posix_time).isoformat()
             else:
                 last_success = None
-                
+
             module_info.append(last_comm)
             module_info.append(last_send)
             module_info.append(last_success)
@@ -130,7 +130,7 @@ try:
                 update_status = "{} ({})".format(computer.security_updates.update_status.status,computer.security_updates.update_status.status_message)
             else:
                 update_status = "No update status available"
-                
+
             module_info.append(update_status)
 
             module_info.append(computer.anti_malware.state)
@@ -142,7 +142,7 @@ try:
             else:
                 am_agent_status = None
                 am_agent_status_message = None
-            
+
             module_info.append(am_agent_status)
             module_info.append(am_agent_status_message)
 
@@ -161,10 +161,10 @@ try:
 
             module_info.append(ips_agent_status)
             module_info.append(computer.intrusion_prevention.module_status.agent_status_message)
-    
 
             # Add the module info to the CSV string
             csv += format_for_csv(module_info)
+
         # Get the ID of the last computer in the page and return it with the
         # number of computers on the page
         last_id = computers.computers[-1].id
@@ -173,7 +173,7 @@ try:
 
         if num_found != page_size:
             break
-        
+
     with open("computers.csv", "w") as text_file:
         text_file.write(csv)
 
