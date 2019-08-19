@@ -5,7 +5,7 @@ import warnings
 import deepsecurity as api
 from deepsecurity.rest import ApiException
 from datetime import datetime
-from pprint import pprint
+
 
 def format_for_csv(line_item):
     """Converts a list into a string of comma-separated values, ending with a newline character.
@@ -82,7 +82,6 @@ try:
 
         for computer in computers.computers:
             # Module information to add to the CSV string
-            pprint(computer)
             module_info = []
 
             module_info.append(computer.host_name)
