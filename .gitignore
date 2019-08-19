@@ -1,3 +1,4 @@
 properties.json
 properties_test.json
 __pycache__/
+output/
