@@ -82,7 +82,7 @@ try:
         # Add the module info to the CSV string
         csv += format_for_csv(module_info)
 
-    with open("../users.csv", "w") as text_file:
+    with open("output/users.csv", "w") as text_file:
         text_file.write(csv)
 
 except ApiException as e:

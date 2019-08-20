@@ -173,7 +173,7 @@ try:
         if num_found != page_size:
             break
 
-    with open("computers.csv", "w") as text_file:
+    with open("output/computers.csv", "w") as text_file:
         text_file.write(csv)
 
 except ApiException as e:
