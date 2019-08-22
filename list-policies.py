@@ -53,7 +53,6 @@ overrides = False
 
 try:
     policies = api_instance.list_policies(api_version, overrides=overrides)
-    defaults = api_instance.list_default_settings(api_version)
 
     for policy in policies.policies:
         module_info = []
