@@ -5,7 +5,6 @@ import warnings
 import deepsecurity as api
 from deepsecurity.rest import ApiException
 
-
 def format_for_csv(line_item):
     """Converts a list into a string of comma-separated values, ending with a newline character.
     :param line_item: The list of lists to convert to a string of comma-spearated values
@@ -47,7 +46,7 @@ configuration.api_key['api-secret-key'] = secret_key
 api_instance = api.PoliciesApi(api.ApiClient(configuration))
 
 # Add column titles to comma-separated values string
-csv = "Policy ID;Name;Parent ID;Antimalware;Application control;firewall;integrity monitoring;interface types;intrusion prevention;log_inspection;communication direction;heartbeat interval\n"
+csv = "Policy ID;Name;Description;Antimalware;Antimalware manual scan configuration id;Antimalware real time scan configuration;Antimalware Scheduled scan configuration;Application control;firewall;integrity monitoring;interface types;intrusion prevention;recommendation scan mode;log_inspection;web reputation\n"
 
 overrides = False
 
@@ -58,20 +57,23 @@ try:
         module_info = []
         module_info.append(policy.id)
         module_info.append(policy.name)
-        module_info.append(policy.parent_id)
-        module_info.append(policy.anti_malware.module_status.status_message)
-        module_info.append(policy.application_control.module_status.status_message)
-        module_info.append(policy.firewall.module_status.status_message)
-        module_info.append(policy.integrity_monitoring.module_status.status_message)
+        module_info.append(policy.description.replace('\n', ' ').replace('\r', ''))
+        module_info.append("{} ({})".format(policy.anti_malware.module_status.status, policy.anti_malware.module_status.status_message))
+        module_info.append(policy.anti_malware.manual_scan_configuration_id)
+        module_info.append(policy.anti_malware.real_time_scan_configuration_id)
+        module_info.append(policy.anti_malware.scheduled_scan_configuration_id)
+        module_info.append("{} ({})".format(policy.application_control.module_status.status,policy.application_control.module_status.status_message))
+        module_info.append("{} ({})".format(policy.firewall.module_status.status,policy.firewall.module_status.status_message))
+        module_info.append("{} ({})".format(policy.integrity_monitoring.module_status.status,policy.integrity_monitoring.module_status.status_message))
         if policy.interface_types:
             module_info.append(policy.interface_types.module_status.status_message)
         else:
             module_info.append("None")
-        module_info.append(policy.intrusion_prevention.module_status.status_message)
-        module_info.append(policy.log_inspection.module_status.status_message)
+        module_info.append("{} ({})".format(policy.intrusion_prevention.module_status.status,policy.intrusion_prevention.module_status.status_message))
+        module_info.append(policy.recommendation_scan_mode)
+        module_info.append("{} ({})".format(policy.log_inspection.module_status.status, policy.log_inspection.module_status.status_message))
+        module_info.append("{} ({})".format(policy.web_reputation.module_status.status, policy.web_reputation.module_status.status_message))
 
-        module_info.append(policy.policy_settings.platform_setting_agent_communications_direction.value)
-        module_info.append(policy.policy_settings.platform_setting_heartbeat_interval.value)
         # Add the module info to the CSV string
         csv += format_for_csv(module_info)
 
@@ -80,4 +82,4 @@ try:
 
 
 except ApiException as e:
-    print("An exception occurred when calling ComputersApi.list_computers: %s\n" % e)
+    print("An exception occurred: %s\n" % e)

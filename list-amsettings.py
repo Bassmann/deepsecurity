@@ -46,16 +46,21 @@ configuration.api_key['api-secret-key'] = secret_key
 # Set Any Required Values
 api_instance = api.AntiMalwareConfigurationsApi(api.ApiClient(configuration))
 api_directories = api.DirectoryListsApi(api.ApiClient(configuration))
+api_files = api.FileListsApi(api.ApiClient(configuration))
+api_file_extensions = api.FileExtensionListsApi(api.ApiClient(configuration))
 
 # Add column titles to comma-separated values string
-am_csv = "Configuration ID;Name;alert_enabled;excluded_directory_list_id;excluded_file_extension_list_id;excluded_file_list_id;excluded_process_image_file_list_id;files_to_scan;network_directories_enabled;real_time_scan;scan_action_for_virus;scan_action_for_possible_malware;scan_action_for_other_threats;scan_action_for_spyware;scan_action_for_trojans\n"
-
+am_csv = "Configuration ID;Name;Alert enabled;Excluded directory list;Excluded file extension list;Excluded file list;Excluded process image file list;Files to scan;Network directories enabled;Real time scan\n"
 dl_csv = "id;name;description;items\n"
+fl_csv = "id;name;description;items\n"
+fel_csv = "id;name;description;items\n"
 
 try:
     api_response = api_instance.list_anti_malwares(api_version)
     directory_response = api_directories.list_directory_lists(api_version)
-
+    files_response = api_files.list_file_lists(api_version)
+    file_extension_response = api_file_extensions.list_file_extension_lists(api_version)
+    
     dl_dict = {}
 
     for dlist in directory_response.directory_lists:
@@ -64,11 +69,42 @@ try:
 
         module_info.append(dlist.id)
         module_info.append(dlist.name)
-        module_info.append(dlist.description)
+        module_info.append(dlist.description.replace('\n', ' ').replace('\r', ''))
+        # add all items into a single entry separated by spaces
         module_info.append(" ".join(dlist.items))
 
         # Add the module info to the CSV string
         dl_csv += format_for_csv(module_info)
+
+    fl_dict = {}
+
+    for flist in files_response.file_lists:
+        fl_dict[flist.id] = flist.name
+        module_info = []
+
+        module_info.append(flist.id)
+        module_info.append(flist.name)
+        module_info.append(flist.description.replace('\n', ' ').replace('\r', ''))
+        # add all items into a single entry separated by spaces
+        module_info.append(" ".join(flist.items))
+
+        # Add the module info to the CSV string
+        fl_csv += format_for_csv(module_info)
+
+    fel_dict = {}
+
+    for felist in file_extension_response.file_extension_lists:
+        fel_dict[felist.id] = felist.name
+        module_info = []
+
+        module_info.append(felist.id)
+        module_info.append(felist.name)
+        module_info.append(felist.description.replace('\n', ' ').replace('\r', ''))
+        # add all items into a single entry separated by spaces
+        module_info.append(" ".join(felist.items))
+
+        # Add the module info to the CSV string
+        fel_csv += format_for_csv(module_info)
 
     for amconfig in api_response.anti_malware_configurations:
         module_info = []
@@ -79,17 +115,21 @@ try:
             module_info.append(dl_dict[amconfig.excluded_directory_list_id])
         else:
             module_info.append("None")
-        module_info.append(amconfig.excluded_file_extension_list_id)
-        module_info.append(amconfig.excluded_file_list_id)
-        module_info.append(amconfig.excluded_process_image_file_list_id)
+        if amconfig.excluded_file_extension_list_id:
+            module_info.append(fel_dict[amconfig.excluded_file_extension_list_id])
+        else:
+            module_info.append("None")
+        if amconfig.excluded_file_list_id:
+            module_info.append(fl_dict[amconfig.excluded_file_list_id])
+        else:
+            module_info.append("None")
+        if amconfig.excluded_process_image_file_list_id:
+            module_info.append(fl_dict[amconfig.excluded_process_image_file_list_id])
+        else:
+            module_info.append("None")
         module_info.append(amconfig.files_to_scan)
         module_info.append(amconfig.network_directories_enabled)
         module_info.append(amconfig.real_time_scan)
-        module_info.append(amconfig.scan_action_for_virus)
-        module_info.append(amconfig.scan_action_for_possible_malware)
-        module_info.append(amconfig.scan_action_for_other_threats)
-        module_info.append(amconfig.scan_action_for_spyware)
-        module_info.append(amconfig.scan_action_for_trojans)
 
         # Add the module info to the CSV string
         am_csv += format_for_csv(module_info)
@@ -100,5 +140,11 @@ try:
     with open("output/DirectoryLists.csv", "w") as text_file:
         text_file.write(dl_csv)
 
+    with open("output/FileExtensionsList.csv", "w") as text_file:
+        text_file.write(fel_csv)
+
+    with open("output/FileLists.csv", "w") as text_file:
+        text_file.write(fl_csv)
+
 except ApiException as e:
-    print("An exception occurred when calling ComputersApi.list_computers: %s\n" % e)
+    print("An API exception occurred: %s\n" % e)
