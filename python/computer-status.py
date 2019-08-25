@@ -29,7 +29,7 @@ if not sys.warnoptions:
     warnings.simplefilter("ignore")
 
 # Get the DSM URL and API key from a JSON file
-property_file = os.path.dirname(os.path.abspath(__file__)) + '/properties_test.json'
+property_file = os.path.dirname(os.path.abspath(__file__)) + '/../properties_test.json'
 
 with open(property_file) as raw_properties:
     properties = json.load(raw_properties)
@@ -173,7 +173,7 @@ try:
         if num_found != page_size:
             break
 
-    with open("output/computers.csv", "w") as text_file:
+    with open("../output/computers.csv", "w") as text_file:
         text_file.write(csv)
 
 except ApiException as e:

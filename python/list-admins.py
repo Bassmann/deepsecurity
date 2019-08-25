@@ -30,7 +30,7 @@ if not sys.warnoptions:
     warnings.simplefilter("ignore")
 
 # Get the DSM URL and API key from a JSON file
-property_file = os.path.dirname(os.path.abspath(__file__)) + '/properties.json'
+property_file = os.path.dirname(os.path.abspath(__file__)) + '/../properties.json'
 
 with open(property_file) as raw_properties:
     properties = json.load(raw_properties)
@@ -82,7 +82,7 @@ try:
         # Add the module info to the CSV string
         csv += format_for_csv(module_info)
 
-    with open("output/users.csv", "w") as text_file:
+    with open("../outputoutput/users.csv", "w") as text_file:
         text_file.write(csv)
 
 except ApiException as e:
