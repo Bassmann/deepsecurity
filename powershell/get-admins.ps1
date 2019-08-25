@@ -24,6 +24,7 @@ $admins = Invoke-RestMethod -Uri $adminuri -Method Get -Headers $headers
 
 $roles = Invoke-RestMethod -Uri $rolesuri -Method Get -Headers $headers
 
+$rolesdict = @{}
 $roles.roles | ForEach-Object {$rolesdict[$_.id]=$_.name}
 
 $adminList = @()
