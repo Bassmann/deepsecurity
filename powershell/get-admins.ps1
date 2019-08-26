@@ -34,13 +34,19 @@ foreach ($admin in $admins.administrators) {
     $role = $rolesdict[$admin.roleId]
     $created = Get-Date ((Get-Date 01.01.1970)+([System.TimeSpan]::frommilliseconds($admin.created))) -format u
     $lastsignin = Get-Date ((Get-Date 01.01.1970)+([System.TimeSpan]::frommilliseconds($admin.lastsignin))) -format u
+    $lastpwchange = Get-Date ((Get-Date 01.01.1970)+([System.TimeSpan]::frommilliseconds($admin.lastPasswordChange))) -format u
 
     $adminInfo | Add-Member -type NoteProperty -Name Username -Value $admin.username
-    $adminInfo | Add-Member -type NoteProperty -Name Active -Value $admin.active
+    $adminInfo | Add-Member -type NoteProperty -Name Email -Value $admin.emailAddress
     $adminInfo | Add-Member -type NoteProperty -Name External -Value $admin.external
+    $adminInfo | Add-Member -type NoteProperty -Name Notifications -Value $admin.receiveNotifications
+    $adminInfo | Add-Member -type NoteProperty -Name Active -Value $admin.active
+    $adminInfo | Add-Member -type NoteProperty -Name MFA -Value $admin.mfatype
     $adminInfo | Add-Member -type NoteProperty -Name Role -Value $role
     $adminInfo | Add-Member -type NoteProperty -Name Created -Value $created
     $adminInfo | Add-Member -type NoteProperty -Name LastSignIn -Value $lastsignin
+    $adminInfo | Add-Member -type NoteProperty -Name LastPWChange -Value $lastpwchange
+    $adminInfo | Add-Member -type NoteProperty -Name UnsuccessfulSigninAttempts -Value $admin.unsuccessfulSignInAttempts
 
     $adminList+= $adminInfo
 }
