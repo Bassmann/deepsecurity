@@ -52,3 +52,4 @@ foreach ($admin in $admins.administrators) {
 }
 
 $adminList | Export-Csv -Path "..\output\admins.csv" -Delimiter ";" -NoTypeInformation
+$adminList | Export-Excel -Path "..\output\admins.xlsx" -AutoSize -StartRow 2 -TableName "admins" 

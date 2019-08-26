@@ -48,6 +48,9 @@ foreach ($policy in $policies.policies) {
 }
 
 $policiesList | Export-Csv -Path "../output/Policies.csv" -Delimiter ";" -NoTypeInformation
+$xlfile = "../output/Policies.xlsx"
+
+$policiesList | Export-Excel -Path "../output/Policies.xlsx" -WorksheetName "Policies" -Title "Policies" -AutoSize
 
 # Export the Antimalware configurations
 "{0} Get Antimalware configurations" -f (Get-Date -Format u)
@@ -56,6 +59,7 @@ $uri = "$Url/antimalwareconfigurations"
 $amconfigs = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
 
 $amconfigs.antiMalwareConfigurations | Export-Csv -Path "../output/AMConfigs.csv" -Delimiter ";" -NoTypeInformation
+$amconfigs.antiMalwareConfigurations | Export-Excel -Path $xlfile -WorksheetName "AM Configs" -Title "AMConfigs" -AutoSize
 
 # Export the directory exclusions
 "{0} Get Directory exclusions" -f (Get-Date -Format u)
@@ -79,6 +83,7 @@ foreach ($directory in $amdirectories.directoryLists) {
 }
 
 $directoriesList | Export-Csv -Path "../output/DirectoryExclusions.csv" -Delimiter ";" -NoTypeInformation
+$directoriesList | Export-Excel -Path $xlfile -WorksheetName "DirExclusions" -Title "Directory Exclusions" -AutoSize
 
 # Export the file list exclusions
 "{0} Get file exclusions" -f (Get-Date -Format u)
@@ -102,6 +107,7 @@ foreach ($file in $amfiles.fileLists) {
 }
 
 $fileList | Export-Csv -Path "../output/fileExclusions.csv" -Delimiter ";" -NoTypeInformation
+$fileList | Export-Excel -Path $xlfile -WorksheetName "File Exclusions" -Title "File Exclusions" -AutoSize
 
 # Export the file extension exclusions
 "{0} Get file extension exclusions" -f (Get-Date -Format u)
@@ -125,3 +131,4 @@ foreach ($fileExt in $amfileextensions.fileExtensionLists) {
 }
 
 $fileExtList | Export-Csv -Path "../output/FileExtensionExclusions.csv" -Delimiter ";" -NoTypeInformation
+$fileExtList | Export-Excel -Path $xlfile -WorksheetName "File Extension Exclusions" -Title "File Extension Exclusions" -AutoSize
