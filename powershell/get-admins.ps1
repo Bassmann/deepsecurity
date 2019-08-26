@@ -3,7 +3,7 @@
 
 
 # Get the base URL and the authentication key
-$properties = Get-Content ".\..\properties.json" | ConvertFrom-Json
+$properties = Get-Content ".\..\properties.json" -Raw | ConvertFrom-Json
 
 $headers = @{
     'api-secret-key' = $properties.secretkey
