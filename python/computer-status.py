@@ -29,7 +29,7 @@ if not sys.warnoptions:
     warnings.simplefilter("ignore")
 
 # Get the DSM URL and API key from a JSON file
-property_file = os.path.dirname(os.path.abspath(__file__)) + '/../properties_test.json'
+property_file = os.path.dirname(os.path.abspath(__file__)) + '/../properties.json'
 
 with open(property_file) as raw_properties:
     properties = json.load(raw_properties)
@@ -53,6 +53,7 @@ expand_options.add(api.Expand.security_updates)
 expand_options.add(api.Expand.intrusion_prevention)
 expand_options.add(api.Expand.anti_malware)
 expand_options.add(api.Expand.interfaces)
+expand_options.add(api.Expand.azure_arm_virtual_machine_summary)
 expand = expand_options.list()
 overrides = False
 
@@ -68,10 +69,11 @@ search_filter.max_items = page_size
 search_filter.search_criteria = [search_criteria]
 
 # Add column titles to comma-separated values string
-csv = "Host Name;Agent version;Platform;IP Address;Agent Status;Agent Status Message;PolicyId;GroupId;Last Communication;Last Policy Sent;Last Policy Success;Update Status;AM Module State;AM Status;AM Status Message;AM Update Status;IPS Status;IPS Status Message\n"
+csv = "Host Name;Displayname;DNS Name;Agent version;Platform;IP Address;Agent Status;Agent Status Message;PolicyId;GroupId;Last Communication;Last Policy Sent;Last Policy Success;Update Status;AM Module State;AM Status;AM Status Message;AM Update Status;IPS Status;IPS Status Message\n"
 
 try:
     # Perform the search and do work on the results
+    print("Start reading computers")
     while True:
         computers = api_instance.search_computers(api_version, search_filter=search_filter, expand=expand, overrides=False)
         num_found = len(computers.computers)
@@ -85,6 +87,13 @@ try:
             module_info = []
 
             module_info.append(computer.host_name)
+            module_info.append(computer.display_name)
+
+            if computer.azure_arm_virtual_machine_summary:
+                module_info.append(computer.azure_arm_virtual_machine_summary.dns_name)
+            else:
+                module_info.append("None")
+            
             module_info.append(computer.agent_version)
             module_info.append(computer.platform)
 
@@ -93,6 +102,10 @@ try:
                 for interface in computer.interfaces.interfaces:
                     if type(interface.ips) is list:
                         ips_list.append(", ".join(interface.ips))
+
+            if computer.azure_arm_virtual_machine_summary:
+                ips_list.append(computer.azure_arm_virtual_machine_summary.public_ip_address)
+                ips_list.append(computer.azure_arm_virtual_machine_summary.private_ip_address)
 
             module_info.append(" ".join(ips_list))
             module_info.append(computer.computer_status.agent_status)
