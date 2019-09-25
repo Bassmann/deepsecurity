@@ -10,6 +10,8 @@ $headers = @{
     'api-version' = 'v1'
 }
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 $Url = $properties.url
 
 # Export the policies including all antimaleware and intrusion prevention settings
