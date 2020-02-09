@@ -40,12 +40,12 @@ foreach ($policy in $policies.policies) {
     $policyInfo | Add-Member -type NoteProperty -Name RecommendationScanmode -Value $policy.recommendationScanMode
 
     # add all the policysettings for antimalware, intrusionprevention and platform
-    $policy.policySettings.PSObject.Properties | Where-object {($_.Name -like "intrusion*") -or ($_.Name -like "antimalware*") -or ($_.name -like "platform*")} | sort | ForEach-Object {
+    $policy.policySettings.PSObject.Properties | Where-object {($_.Name -like "intrusion*") -or ($_.Name -like "antimalware*") -or ($_.name -like "platform*")} | Sort-Object | ForEach-Object {
         $name = $_.Name;
         $value = $_.Value.value;
         $policyInfo | Add-Member -type NoteProperty -Name $name -Value $value
     }
-            
+
     $policiesList+= $policyInfo
 }
 
@@ -76,7 +76,7 @@ foreach ($directory in $amdirectories.directoryLists) {
     $description = $directory.description -replace "\n"
     $items = $directory.items -join " "
 
-    $dirInfo | Add-Member -type NoteProperty -Name Id -Value $directory.Id 
+    $dirInfo | Add-Member -type NoteProperty -Name Id -Value $directory.Id
     $dirInfo | Add-Member -type NoteProperty -Name Name -Value $directory.Name
     $dirInfo | Add-Member -type NoteProperty -Name Description -Value $description
     $dirInfo | Add-Member -type NoteProperty -Name Directories -Value $items
@@ -100,7 +100,7 @@ foreach ($file in $amfiles.fileLists) {
     $description = $file.description -replace "\n"
     $items = $file.items -join " "
 
-    $fileInfo | Add-Member -type NoteProperty -Name Id -Value $file.Id 
+    $fileInfo | Add-Member -type NoteProperty -Name Id -Value $file.Id
     $fileInfo | Add-Member -type NoteProperty -Name Name -Value $file.Name
     $fileInfo | Add-Member -type NoteProperty -Name Description -Value $description
     $fileInfo | Add-Member -type NoteProperty -Name Directories -Value $items
@@ -124,7 +124,7 @@ foreach ($fileExt in $amfileextensions.fileExtensionLists) {
     $description = $fileExt.description -replace "\n"
     $items = $fileExt.items -join " "
 
-    $fileExtInfo | Add-Member -type NoteProperty -Name Id -Value $fileExt.Id 
+    $fileExtInfo | Add-Member -type NoteProperty -Name Id -Value $fileExt.Id
     $fileExtInfo | Add-Member -type NoteProperty -Name Name -Value $fileExt.Name
     $fileExtInfo | Add-Member -type NoteProperty -Name Description -Value $description
     $fileExtInfo | Add-Member -type NoteProperty -Name Directories -Value $items
