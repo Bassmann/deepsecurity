@@ -40,7 +40,7 @@ foreach ($policy in $policies.policies) {
     $policyInfo | Add-Member -type NoteProperty -Name RecommendationScanmode -Value $policy.recommendationScanMode
 
     # add all the policysettings for antimalware, intrusionprevention and platform
-    $policy.policySettings.PSObject.Properties | Where-object {($_.Name -like "intrusion*") -or ($_.Name -like "antimalware*") -or ($_.name -like "platform*")} | sort | ForEach-Object {
+    $policy.policySettings.PSObject.Properties | Where-object {($_.Name -like "intrusion*") -or ($_.Name -like "antimalware*") -or ($_.name -like "platform*")} | Sort-Object | ForEach-Object {
         $name = $_.Name;
         $value = $_.Value.value;
         $policyInfo | Add-Member -type NoteProperty -Name $name -Value $value
